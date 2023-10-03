@@ -7,7 +7,7 @@ function App() {
 
   const addTask = () => {
     if (task.trim() !== '') {
-      setTasks([...tasks, { task: task, status: '', backgroundColor: 'white' }]);
+      setTasks([...tasks, { task: task, status: '', backgroundColor: 'white', edit:false }]);
       setTask('');
     }
   };
@@ -40,6 +40,7 @@ function App() {
     });
     setTasks(updatedTasks);
   };
+  
 
   return (
     <div className="container mt-5" style={{ maxWidth: '1000px' }}>
@@ -71,7 +72,26 @@ function App() {
             className="list-group-item d-flex justify-content-between align-items-center"
             style={{ backgroundColor: taskObj.backgroundColor }}
           >
-            {taskObj.task}
+            {taskObj.edit ? (
+              <input 
+                type="text"
+                value={taskObj.task}
+                onChange={(e) => {
+                  const updatedTasks = tasks.map((t, i) => {
+                    if (i === index) {
+                      return { ...t, task: e.target.value };
+                    }
+                    return t;
+                  });
+                  setTasks(updatedTasks);
+                }}
+                className="form-control"
+                style={{width:'610px'}}
+              />
+            ) : (
+              taskObj.task
+            )}
+
             <div className="d-flex align-items-center">
               <select
                 value={taskObj.status}
@@ -82,6 +102,21 @@ function App() {
                 <option value="done">Сделано</option>
                 <option value="wasnt done">Не сделано</option>
               </select>
+              <button 
+                  className={taskObj.edit ? "btn btn-success btn-sm me-1" : "btn btn-primary btn-sm me-1"}
+                  onClick={() => {
+                      const updatedTasks = tasks.map((t, i) => {
+                          if (i === index) {
+                              return { ...t, edit: !t.edit };
+                          }
+                          return t;
+                      });
+                      setTasks(updatedTasks);
+                  }}
+              >
+                  {taskObj.edit ? "Change" : "Edit"}
+              </button>
+
               <button
                 className="btn btn-danger btn-sm"
                 onClick={() => removeTask(index)}
